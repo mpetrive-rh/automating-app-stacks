@@ -25,5 +25,21 @@ Vagrant.configure("2") do |config|
       end
 
       config.vm.hostname = "nodejs"
+
+      nodeconfig.vm.network :forwarded_port,
+        guest: 3000,
+        host: 3001,
+        host_ip: "192.168.1.100"
+    end
+
+    config.vm.define "mongodb" do |nodeconfig|
+      config.vm.box = "rhel7"
+
+      if Vagrant.has_plugin?('vagrant-registration')
+        config.registration.username = ENV["RHSM_USERNAME"]
+        config.registration.password =  ENV["RHSM_PASSWORD"]
+      end
+
+      config.vm.hostname = "mongodb"
     end
 end

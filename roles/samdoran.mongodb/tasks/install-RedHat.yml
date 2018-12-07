@@ -1,0 +1,61 @@
+- name: RHEL | Add mongo repository
+  yum_repository:
+    baseurl: https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/{{ mongodb_version }}/{{ ansible_architecture }}/
+    description: MongoDB Repository
+    name: mongodb-org-{{ mongodb_version }}
+    file: mongodb
+    enabled: true
+    gpgkey: https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc
+  tags:
+    - mongodb_yum
+    - mongodb_yum_repo
+
+- name: RHEL | Install MongoDB
+  yum:
+    name: "{{ mongodb_packages }}"
+    state: present
+  tags:
+    - mongodb_yum
+
+- name: RHEL | Set permissions and SELinux context on log and data directories
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_user }}"
+    mode: 0755
+    setype: "{{ item.type }}"
+  with_items:
+    - path: "{{ mongodb_data_dir }}"
+      type: mongod_var_lib_t
+    - path: "{{ mongodb_log_dir }}"
+      type: mongod_log_t
+  tags:
+    - mongodb_config
+    - mongodb_selinux
+
+- name: RHEL | Configure SELinux
+  seport:
+    ports: "{{ mongodb_selinux_ports }}"
+    proto: tcp
+    setype: mongod_port_t
+    state: present
+  when:
+    - not mongodb_disable_selinux
+    - ansible_selinux.status == 'enabled'
+    - ansible_selinux.mode == 'enforcing'
+  tags:
+    - mongodb_selinux
+    - skipci
+
+- name: RHEL | Disable SELinux
+  selinux:
+    state: disabled
+  when: mongodb_disable_selinux
+  notify:
+    - reboot system
+    - wait for system to come back up
+  tags:
+    - mongodb_selinux
+    - skipci
+
+- meta: flush_handlers

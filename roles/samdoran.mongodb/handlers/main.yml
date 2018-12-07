@@ -1,0 +1,17 @@
+- name: reboot system
+  shell: sleep 2 && shutdown -r now
+  async: 5
+  poll: 0
+
+- name: wait for system to come back up
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 22
+    search_regex: OpenSSH
+    delay: 15
+  delegate_to: localhost
+
+- name: restart mongodb
+  service:
+    name: "{{ mongodb_service_name }}"
+    state: restarted

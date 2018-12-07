@@ -1,0 +1,16 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+  - include_role:
+      name: geerlingguy.nodejs
+    vars:
+      nodejs_version: "10.x"
+      nodejs_npm_global_packages:
+        - nodemon
+        - mongoose
+        - fastify
+        - fastify-swagger
+        - boom
+        - documentation

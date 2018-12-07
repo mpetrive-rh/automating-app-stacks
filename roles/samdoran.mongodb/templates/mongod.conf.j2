@@ -1,0 +1,40 @@
+
+# {{ ansible_managed }}
+
+systemLog:
+  destination: file
+  logAppend: true
+  path: {{ mongodb_log_file }}
+
+storage:
+  dbPath: {{ mongodb_data_dir }}
+  journal:
+    enabled: true
+#  engine:
+#  mmapv1:
+#  wiredTiger:
+
+processManagement:
+  fork: true
+  pidFilePath: {{ mongodb_pid_file }}
+
+net:
+  port: {{ mongodb_port }}
+  {% if not mongodb_bind_all -%}
+  bindIp: {{ mongodb_bind_ip }}
+  {%- endif %}
+
+
+#security:
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options
+
+#auditLog:
+
+#snmp:
