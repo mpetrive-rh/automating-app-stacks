@@ -1,6 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'yaml'
+
+current_dir    = File.dirname(File.expand_path(__FILE__))
+inventory_data        = YAML.load_file("#{current_dir}/inventory/node-base.yml")
+
 # https://github.com/projectatomic/adb-vagrant-registration/issues/126
 module SubscriptionManagerMonkeyPatches
     def self.subscription_manager_registered?(machine)
@@ -13,33 +18,39 @@ VagrantPlugins::Registration::Plugin.guest_capability 'redhat', 'subscription_ma
     SubscriptionManagerMonkeyPatches
 end
 
+hosts = inventory_data['all']['hosts'].keys
 
 Vagrant.configure("2") do |config|
-
-    config.vm.define "nodejs" do |nodeconfig|
-      config.vm.box = "rhel7"
-
-      if Vagrant.has_plugin?('vagrant-registration')
-        config.registration.username = ENV["RHSM_USERNAME"]
-        config.registration.password =  ENV["RHSM_PASSWORD"]
-      end
-
-      config.vm.hostname = "nodejs"
-
-      nodeconfig.vm.network :forwarded_port,
-        guest: 3000,
-        host: 3001,
-        host_ip: "192.168.1.100"
-    end
-
-    config.vm.define "mongodb" do |nodeconfig|
-      config.vm.box = "rhel7"
+  hosts.each do |node|
+    config.vm.define node do |nodeconfig|
+      config.vm.box = "centos/7"
+      #config.vm.box = "rhel7"
 
       if Vagrant.has_plugin?('vagrant-registration')
         config.registration.username = ENV["RHSM_USERNAME"]
         config.registration.password =  ENV["RHSM_PASSWORD"]
       end
 
-      config.vm.hostname = "mongodb"
+      config.vm.hostname = node
+
+      nodeconfig.vm.provider :libvirt do |libvirt|
+        libvirt.memory = 1024
+      end
+      # nodeconfig.vm.network :forwarded_port,
+      #   guest: 3000,
+      #   host: 3001,
+      #   host_ip: "192.168.1.100"
     end
+
+    # config.vm.define "mongodb" do |nodeconfig|
+    #   config.vm.box = "rhel7"
+    #
+    #   if Vagrant.has_plugin?('vagrant-registration')
+    #     config.registration.username = ENV["RHSM_USERNAME"]
+    #     config.registration.password =  ENV["RHSM_PASSWORD"]
+    #   end
+    #
+    #   config.vm.hostname = "mongodb"
+    # end
+  end
 end

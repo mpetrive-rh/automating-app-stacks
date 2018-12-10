@@ -1,19 +1,16 @@
 ---
 
-- hosts: all
+- hosts: database
   become: true
   pre_tasks:
   - name: create default data dir. mongod.conf not being read by mongo
     file:
       state: directory
       path: /data/db
+  - name: install deps
+    yum:
+      name: policycoreutils-python
   roles:
   - role: samdoran.mongodb
     mongodb_version: 4.0
     mongodb_bind_ip: "{{ ansible_all_ipv4_addresses[-1] }}"
-  #tasks:
-  #- debug: var=ansible_all_ipv4_addresses
-  #- include_role:
-  #    name: samdoran.mongodb
-    #vars:
-    #  mongodb_bind_ip: "{{ ansible_all_ipv4_addresses[-1] }}"

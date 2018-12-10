@@ -1,0 +1,67 @@
+---
+
+- hosts: application
+  become: true
+  vars:
+    nodejs_app_user: nodesvc
+    nodejs_app_repo: https://github.com/mpetrive-rh/nodejs-wisdom.git
+    nodejs_app_name: nodejs-wisdom
+    nodejs_db_target: "{{ groups['database'][-1] }}"
+  tasks:
+  - name: create service user for application
+    user:
+      name: "{{nodejs_app_user}}"
+      state: present
+
+  - name: ensure git is installed
+    yum:
+      name: git
+      state: installed
+
+  - name: block for application user
+    block:
+    - name: deploy application
+      git:
+        repo: "{{ nodejs_app_repo }}"
+        dest: "/home/{{ nodejs_app_user }}/{{ nodejs_app_name }}"
+
+    - name: deploy config file
+      file:
+        state: directory
+        path: "/home/{{ nodejs_app_user }}/nodejs-config"
+
+    - name: ensure all mongodb facts are available
+      setup:
+      delegate_to: "{{ nodejs_db_target }}"
+      delegate_facts: true
+      become: false
+
+    - name: template configuration file
+      template:
+        src: config.js.j2
+        dest: "/home/{{ nodejs_app_user }}/nodejs-config/appConfig.js"
+      vars:
+        app_nodejs_dbhost: "{{ hostvars[nodejs_db_target].ansible_all_ipv4_addresses[-1] }}"
+        app_nodejs_listen_addr: "{{ ansible_all_ipv4_addresses[-1] }}"
+        app_nodejs_swagger_host: "{{ ansible_all_ipv4_addresses[-1] }}"
+
+    - name: template configuration file
+      template:
+        src: swagger.js.j2
+        dest: "/home/{{ nodejs_app_user }}/nodejs-config/swagger.js"
+      vars:
+        app_nodejs_swagger_host: "{{ ansible_all_ipv4_addresses[-1] }}"
+
+    become_user: "{{ nodejs_app_user }}"
+
+  - name: deploy systemd service script
+    template:
+      src: "{{ nodejs_app_name }}.service.j2"
+      dest: /etc/systemd/system/nodejs-wisdom.service
+      mode: 0755
+
+  - name: enable service
+    service:
+      name: "{{ nodejs_app_name }}"
+      state: restarted
+      enabled: true

@@ -1,6 +1,6 @@
 ---
 
-- hosts: all
+- hosts: application
   become: true
   tasks:
   - include_role:

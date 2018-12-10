@@ -3,3 +3,5 @@
 - src: geerlingguy.nodejs
 
 - src: samdoran.mongodb
+
+- src: geerlingguy.haproxy

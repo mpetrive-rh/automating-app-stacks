@@ -1,0 +1,18 @@
+[Unit]
+Description=nodejs wisdom
+After=network.target
+[Service]
+ExecStart=/home/{{nodejs_app_user}}/nodejs-wisdom/src/index.js
+Restart=always
+#User=nobody
+User={{nodejs_app_user}}
+# Use 'nogroup' group for Ubuntu/Debian
+# use 'nobody' group for Fedora
+#Group=nogroup
+Group={{nodejs_app_user}}
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+Environment=NODE_PATH=/usr/local/lib/npm/lib/node_modules
+WorkingDirectory=/home/{{nodejs_app_user}}/nodejs-wisdom/src
+[Install]
+WantedBy=multi-user.target

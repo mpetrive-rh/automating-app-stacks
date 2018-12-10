@@ -1,0 +1,18 @@
+all:
+  hosts:
+    nodejs1:
+    nodejs2:
+    mongodb1:
+    haproxy1:
+application:
+  hosts:
+    nodejs2:
+    nodejs1:
+  vars:
+    nodejs_app_port: 3000
+database:
+  hosts:
+    mongodb1:
+loadbalance:
+  hosts:
+    haproxy1:
