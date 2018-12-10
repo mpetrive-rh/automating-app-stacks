@@ -2,6 +2,10 @@
 # vi: set ft=ruby :
 
 require 'yaml'
+required_plugins = %w( vagrant-libvirt vagrant-registration )
+required_plugins.each do |plugin|
+    exec "vagrant plugin install #{plugin};vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
+end
 
 current_dir    = File.dirname(File.expand_path(__FILE__))
 inventory_data        = YAML.load_file("#{current_dir}/inventory/node-base.yml")
