@@ -1,8 +1,7 @@
 - hosts: all
   connection: local
   vars_files:
-  - vars/ec2_key.yml
-  - vars/ec2_other.yml
+  - vars/ec2_data.yml
   vars:
     ec2_instance_type: linux
   tasks:
