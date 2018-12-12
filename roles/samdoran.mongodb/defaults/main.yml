@@ -1,0 +1,11 @@
+mongodb_version: 3.4
+mongodb_port: 27017
+mongodb_shardsvr_port: 27018
+mongodb_configsvr_port: 27019
+mongodb_webstatus_port: 28017
+mongodb_disable_selinux: false
+mongdb_days_of_logs_to_keep: 30
+
+# Config file options
+mongodb_bind_all: false
+mongodb_bind_ip: 127.0.0.1

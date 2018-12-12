@@ -1,0 +1,66 @@
+all:
+  children:
+    car_app_single:
+      children:
+        car_app_single_application:
+          hosts:
+            car_app_single_application_server:
+          vars:
+            nodejs_app_port: 3000
+        car_app_single_database:
+          hosts:
+            car_app_single_application_server:
+      vars:
+        app_name: car_app_single
+
+    car_app_noproxy:
+      children:
+        car_app_noproxy_application:
+          hosts:
+            car_app_noproxy_application_nodejs1:
+          vars:
+            nodejs_app_port: 3000
+        car_app_noproxy_database:
+          hosts:
+            car_app_noproxy_application_mongodb1:
+      vars:
+        app_name: car_app_noproxy
+
+    car_app_2node:
+      children:
+        car_app_2node_application:
+          hosts:
+            car_app_2node_application_nodejs1:
+            car_app_2node_application_nodejs2:
+          vars:
+            nodejs_app_port: 3000
+        car_app_2node_database:
+          hosts:
+            car_app_2node_application_mongodb1:
+        car_app_2node_loadbalance:
+          hosts:
+            car_app_2node_application_haproxy1:
+      vars:
+        app_name: car_app_2node
+
+    car_app_3node:
+      children:
+        car_app_3node_application:
+          hosts:
+            car_app_3node_application_nodejs1:
+            car_app_3node_application_nodejs2:
+            car_app_3node_application_nodejs3:
+          vars:
+            nodejs_app_port: 3000
+        car_app_3node_database:
+          hosts:
+            car_app_3node_application_mongodb1:
+        car_app_3node_loadbalance:
+          hosts:
+            car_app_3node_application_haproxy1:
+      vars:
+        app_name: car_app_3node
+
+  vars:
+    ansible_ssh_private_key_file: .keys/ec2_key1.pem
+    ansible_user: ec2-user

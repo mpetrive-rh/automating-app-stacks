@@ -1,0 +1,47 @@
+---
+
+- hosts: "*loadbalance"
+  become: true
+  vars:
+    application_hosts: "{{ groups[app_name+'_application'] }}"
+    # could also use {{ ansible_all_ipv4_addresses[-1] }}
+    loadbalance_addr: 0.0.0.0
+    loadbalance_port: "{{ hostvars[application_hosts[0]]['nodejs_app_port'] }}"
+  pre_tasks:
+
+  - debug:
+      msg: "HA proxy address is {{ loadbalance_addr }} "
+
+  - name: ensure all application node facts are available
+    setup:
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    with_items: "{{ application_hosts }}"
+
+  # local fact used to pass proper structure to module
+  - set_fact:
+      _haproxy_backends: "{{ (_haproxy_backends | default([])) + [ __backend ] }}"
+    vars:
+      __backend:
+        name: "{{ item }}"
+        address: "{{ hostvars[item]['ansible_all_ipv4_addresses'][-1] }}:{{ hostvars[item]['nodejs_app_port'] }}"
+    with_items: "{{ application_hosts }}"
+
+  - name: install deps for managing HA proxy with selinux turned on
+    yum:
+      name: libsemanage-python
+
+  - name: Set SE haproxy_connect_any on flag on and keep it persistent across reboots
+    seboolean:
+      name: haproxy_connect_any
+      state: yes
+      persistent: yes
+
+  roles:
+  - role: geerlingguy.haproxy
+    haproxy_backend_servers: "{{ _haproxy_backends }}"
+    haproxy_frontend_name: 'hafrontend'
+    haproxy_frontend_bind_address: '{{ loadbalance_addr }}'
+    haproxy_frontend_port: "{{ loadbalance_port }}"
+    haproxy_frontend_mode: 'http'
+    haproxy_backend_httpchk: ''

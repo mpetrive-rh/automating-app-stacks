@@ -1,0 +1,5 @@
+exports.options = {
+  dbHost: '{{ app_nodejs_dbhost | default("localhost") }}',
+  nodeListenAddr: '{{ app_nodejs_listen_addr | default("0.0.0.0") }}',
+  nodeListenPort: {{ nodejs_app_port | default(3000) }}
+}

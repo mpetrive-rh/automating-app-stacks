@@ -1,0 +1,18 @@
+---
+
+- hosts: "*application[0]"
+  vars:
+    car_endpoint_port: "{{ hostvars[groups[app_name+'_application'][0]].nodejs_app_port }}"
+    car_endpoint: "http://{{ ansible_all_ipv4_addresses[-1]}}:{{car_endpoint_port}}/api/cars"
+  vars_files:
+  - files/canned-data.yml
+  tasks:
+  - debug: msg="{{car_list}}"
+
+  - name: add canned data to database
+    uri:
+      url: "{{ car_endpoint }}"
+      method: POST
+      body_format: json
+      body: "{{ item }}"
+    with_items: "{{ car_list }}"

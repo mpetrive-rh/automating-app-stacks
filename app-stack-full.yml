@@ -1,0 +1,13 @@
+---
+
+- import_playbook: ec2-deploy.yml
+
+- import_playbook: mongodb-setup.yml
+
+- import_playbook: nodejs-setup.yml
+
+- import_playbook: haproxy-setup.yml
+
+- import_playbook: nodejs-app.yml
+
+- import_playbook: nodejs-app-data.yml

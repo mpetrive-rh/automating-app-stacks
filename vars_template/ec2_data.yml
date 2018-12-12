@@ -1,0 +1,27 @@
+# ec2 key pair ot use
+ec2_key_name: EC2_KEY_NAME
+# ec2 private key file associate with key pair
+ec2_private_key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  i.e. ec2_key.pem contents
+  -----END RSA PRIVATE KEY-----
+
+# location to write the private key file
+# NOTE the defaul of .keys is hidden from .gitignore in this project
+ec2_key_file: ".keys/ec2_key1.pem"
+
+# used for API acces with modules
+ec2_access_key: EC2_ACCESS_KEY
+ec2_secret_key: EC2_SECRET_KEY
+
+# AWS/EC2 ID associated with account/region
+vpc_subnet_id: subnet-SUBID
+vpc_id: vpc-VPCID
+security_group: sg-SGID
+rhel7_ami: ami-6871a115
+win2k12r2_ami: ami-07355e1e938a6b6cb
+ami_type:
+  windows: "{{win2k12r2_ami}}"
+  linux: "{{rhel7_ami}}"
+instance_type: t2.large
+ec2_region: us-east-1

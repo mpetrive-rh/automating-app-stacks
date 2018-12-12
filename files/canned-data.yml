@@ -1,0 +1,17 @@
+---
+
+car_list:
+  - title: RDX
+    brand: Acura
+    price: 34000
+    age: 3
+    services:
+      "Dealer X": "1/1/2016"
+      "BodyShop Y": 7/1/2016"
+  - title: 3-Series
+    brand: BMW
+    price: 32500
+    age: 5
+    services:
+      "Dealer A": "1/1/2018"
+      "BodyShop B": 7/1/2017"

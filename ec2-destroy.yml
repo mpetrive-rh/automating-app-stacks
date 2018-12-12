@@ -1,0 +1,17 @@
+- hosts: all
+  connection: local
+  vars_files:
+  - vars/ec2_key.yml
+  - vars/ec2_other.yml
+  vars:
+    ec2_instance_type: linux
+  tasks:
+  - name: remove the instance
+    ec2_instance:
+      name: "{{inventory_hostname}}"
+      ec2_access_key: "{{ec2_access_key}}"
+      ec2_secret_key: "{{ec2_secret_key}}"
+      region: "{{ec2_region}}"
+      key_name: "{{ec2_key_name}}"
+      security_group: "{{security_group}}"
+      state: absent

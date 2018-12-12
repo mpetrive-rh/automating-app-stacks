@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+# Rotate MongoDB logs
+{{ mongodb_log_dir }}/*.log {
+    daily
+    rotate {{ mongdb_days_of_logs_to_keep }}
+    compress
+    dateext
+    missingok
+    notifempty
+    sharedscripts
+    copytruncate
+    postrotate
+        /bin/kill -SIGUSR1 $(cat {{ mongodb_pid_file }} 2> /dev/null) 2> /dev/null || true
+    endscript
+}

@@ -1,0 +1,17 @@
+all:
+  children:
+    car_scale_single:
+      children:
+        car_scale_application:
+          hosts:
+            car_scale_application_server:
+          vars:
+            nodejs_app_port: 3000
+        car_scale_single_database:
+          hosts:
+            car_scale_application_mongodb1:
+      vars:
+        app_name: car_scale_single
+  vars:
+    ansible_ssh_private_key_file: .keys/ec2_key1.pem
+    ansible_user: ec2-user

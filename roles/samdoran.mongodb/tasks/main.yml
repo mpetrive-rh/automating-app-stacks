@@ -1,0 +1,47 @@
+- name: Include variables for {{ ansible_os_family }}
+  include_vars: "{{ ansible_os_family }}.yml"
+  when: ansible_distribution != 'Ubuntu'
+  tags:
+    - always
+
+- name: Include variables for {{ ansible_os_family }}
+  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+  when: ansible_distribution == 'Ubuntu'
+  tags:
+    - always
+
+- include_tasks: install-{{ ansible_os_family }}.yml
+  tags:
+    - mongodb
+
+- name: Copy mongod.conf
+  template:
+    src: mongod.conf.j2
+    dest: "{{ mongodb_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mongodb
+  tags:
+    - mongodb
+    - mongodb_config
+
+- name: Copy logrotate config file
+  template:
+    src: logrotate_mongod.j2
+    dest: /etc/logrotate.d/mongod
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - mongodb
+    - mongodb_config
+
+- name: Start and enable mongo
+  service:
+    name: "{{ mongodb_service_name }}"
+    enabled: true
+    state: started
+  tags:
+    - mongodb
+    - mongodb_service
