@@ -2,4 +2,4 @@
 .vagrant*
 *.log
 .keys*
-vars
+/vars/

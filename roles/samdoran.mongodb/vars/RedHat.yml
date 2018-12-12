@@ -1,0 +1,14 @@
+mongodb_packages:
+  - mongodb-org
+mongodb_selinux_ports: "{{ mongodb_port ~ ',' ~ mongodb_shardsvr_port ~ ',' ~ mongodb_configsvr_port ~ ',' ~ mongodb_webstatus_port }}"
+mongodb_service_name: mongod
+mongodb_user: mongod
+mongodb_group: mongod
+
+# Config file options
+mongodb_config_file: /etc/mongod.conf
+mongodb_data_dir: /var/lib/mongo
+mongodb_log_dir: /var/log/mongodb
+mongodb_log_file: "{{ mongodb_log_dir }}/mongod.log"
+mongodb_pid_file: /var/run/mongodb/mongod.pid
+
