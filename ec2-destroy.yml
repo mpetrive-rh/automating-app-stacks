@@ -4,6 +4,8 @@
   - vars/ec2_data.yml
   vars:
     ec2_instance_type: linux
+    # work around macos python isssues
+    ansible_python_interpreter: "{{ other_python_interpreter | default('/usr/bin/python') }}"
   tasks:
   - name: remove the instance
     ec2_instance:
