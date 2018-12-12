@@ -4,16 +4,16 @@ all:
       children:
         car_scale_single_application:
           hosts:
-            car_scale_single_application_server:
-            car_scale_single_application_server2:
+            car_scale_single_application_server1:
+            #car_scale_single_application_server2:
           vars:
             nodejs_app_port: 3000
         car_scale_single_database:
           hosts:
             car_scale_application_mongodb1:
-        car_scale_single_loadbalance:
-          hosts:
-            car_scale_single_haproxy1:
+        # car_scale_single_loadbalance:
+        #   hosts:
+        #     car_scale_single_haproxy1:
       vars:
         app_name: car_scale_single
   vars:
